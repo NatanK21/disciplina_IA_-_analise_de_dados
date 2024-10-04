@@ -1,0 +1,47 @@
+---
+title: "panorama_analise_dados"
+---
+
+# Panorama da Análise de Dados
+
+## Contexto & História
+
+-   Panorama histórico da Ciência de Dados
+
+-   Big Data
+
+-   Inteligência Artificial
+
+-   Tomada de decisão
+
+-   Áreas de estudo
+
+-   Exemplos: negócios, saúde, educação
+
+## Dados
+
+-   Definição
+
+-   Tipos de dados
+
+-   Meios de coleta de dados
+
+-   Sistemas de armazenamento de dados
+
+## Tipos de Análise de Dados
+
+Existem várias formas de categorizar a análise de dados. Dividir o assunto em quatro tipos é interessante:
+
+-   **Descritiva:**
+
+-   **Diagnóstica:**
+
+-   **Preditiva:**
+
+-   **Prescritiva:**
+
+![](imagens/tipos_analise_dados.png)
+
+## Ciclo da Análise de Dados
+
+-   CRISP-DM
