@@ -1,0 +1,30 @@
+---
+title: "trabalho_EDA"
+format: html
+---
+
+# Trabalho - Análise Exploratória de Dados
+
+Você foi contratado pela empresa Harland & Wolff, responsável por projetar o Titanic. A empresa, mesmo tanto anos após o acidente, decidiu que era hora de explorar os dados dos passageiros daquela embarcação. Um conjunto de dados foi dado a você e sua tarefa é preparar o relatório de uma análise exploratória dos dados.
+
+O relatório será lido pelo presidente da empresa, uma pessoa sem conhecimentos técnicos em análise de dados. Portanto, sua responsabilidade é explicar porque esta fazendo as análises que está fazendo e o que elas dizem sobre os dados (usando linguagem simples).
+
+O relatório também será inspecionado por um Cienstista de Dados contratado pela empresa. Portanto, mantenha seus códigos limpos e bem organizados.
+
+## Pacotes
+
+```{r}
+pacotes <- c("janitor", "tidyverse", "titanic", "e1071")
+
+install.packages(pacotes)
+```
+
+## Dados
+
+```{r}
+# dados do titanic
+library(titanic)
+
+titanic <- titanic_train
+
+```

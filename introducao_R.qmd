@@ -73,8 +73,8 @@ summary(mtcars)
 
 ```{python}
 # Código Python
-import numpy as np
-np.mean([1, 2, 3])
+# import numpy as np
+# np.mean([1, 2, 3])
 ```
 
 **Texto Markdown:** Quarto utiliza a sintaxe Markdown para formatação de texto. Você pode usar Markdown para criar cabeçalhos, listas, links, e muito mais.
@@ -82,7 +82,8 @@ np.mean([1, 2, 3])
 **Visualizações e Gráficos:** Um dos pontos fortes do Quarto é a capacidade de incorporar visualizações de dados diretamente no documento. Você pode gerar gráficos com ferramentas como ggplot2 em R ou matplotlib em Python e incluí-los facilmente.
 
 ```{r}
-library(ggplot2) ggplot(mtcars, aes(x = hp, y = mpg)) + geom_point()
+library(ggplot2) 
+ggplot(mtcars, aes(x = hp, y = mpg)) + geom_point()
 ```
 
 **Formatos de Saída:** Quarto suporta múltiplos formatos de saída, como HTML, PDF e apresentações. Isso permite flexibilidade na forma como você apresenta seus documentos. Você pode especificar o formato de saída no cabeçalho YAML.
@@ -299,17 +300,17 @@ Você pode verificar o diretório de trabalho atual usando a função `getwd()` 
 getwd()
 
 # Definir um novo diretório de trabalho
-setwd("caminho/para/novo/diretorio")
+# setwd("caminho/para/novo/diretorio")
 ```
 
 **Caminhos Absolutos:** Um caminho absoluto especifica a localização completa de um arquivo ou diretório, começando pela raiz do sistema de arquivos. Ele é independente do diretório de trabalho atual.
 
 ```{r}
 # Caminho absoluto no Windows
-"C:\Users\SeuNome\Documentos\projeto\dados.csv"
+# "C:\Users\SeuNome\Documentos\projeto\dados.csv"
 
 # Caminho absoluto no Linux/macOS
-"/home/SeuNome/Documentos/projeto/dados.csv"
+# "/home/SeuNome/Documentos/projeto/dados.csv"
 ```
 
 **Caminhos Relativos:** Um caminho relativo especifica a localização de um arquivo ou diretório em relação ao diretório de trabalho atual. Ele não fornece a localização completa, mas sim como chegar ao destino a partir do diretório de trabalho.
@@ -317,10 +318,10 @@ setwd("caminho/para/novo/diretorio")
 ```{r}
 # Suponha que o diretório de trabalho atual seja "C:/Users/SeuNome/Documentos"
 # Caminho relativo para acessar um arquivo na subpasta "projeto"
-"projeto/dados.csv"
+# "projeto/dados.csv"
 
 # Caminho relativo para acessar um arquivo no diretório pai
-"../outro_projeto/dados.csv"
+# "../outro_projeto/dados.csv"
 
 ```
 
@@ -349,7 +350,7 @@ Se você quiser instalar múltiplos pacotes de uma vez, pode passar um vetor de 
 
 ```{r}
 # Instalando múltiplos pacotes
-install.packages(c("dplyr", "tidyr", "readr"))
+# install.packages(c("dplyr", "tidyr", "readr"))
 ```
 
 Depois de instalar um pacote, você precisa carregá-lo no seu ambiente de trabalho antes de poder usar suas funções. Para isso, usamos a função `library()`:
@@ -410,10 +411,10 @@ CSV é um dos formatos de arquivo mais comuns para armazenamento de dados tabula
 
 ```{r}
 # Importar um arquivo CSV
-dados_csv <- read.csv("caminho/para/arquivo.csv")
-
-# Exportar um data frame para CSV
-write.csv(dados_csv, "caminho/para/saida.csv", row.names = FALSE)
+# dados_csv <- read.csv("caminho/para/arquivo.csv")
+# 
+# # Exportar um data frame para CSV
+# write.csv(dados_csv, "caminho/para/saida.csv", row.names = FALSE)
 
 ```
 
@@ -423,18 +424,18 @@ Para trabalhar com arquivos Excel, podemos utilizar pacotes como `readxl`. Podem
 
 ```{r}
 # Instalar e carregar o pacote readxl
-install.packages("readxl")
-library(readxl)
-
-# Importar um arquivo Excel
-dados_excel <- read_excel("caminho/para/arquivo.xlsx")
-
-# Instalar e carregar o pacote writexl
-install.packages("writexl")
-library(writexl)
-
-# Exportar um data frame para Excel
-write_xlsx(dados_excel, "caminho/para/saida.xlsx")
+# install.packages("readxl")
+# library(readxl)
+# 
+# # Importar um arquivo Excel
+# dados_excel <- read_excel("caminho/para/arquivo.xlsx")
+# 
+# # Instalar e carregar o pacote writexl
+# install.packages("writexl")
+# library(writexl)
+# 
+# # Exportar um data frame para Excel
+# write_xlsx(dados_excel, "caminho/para/saida.xlsx")
 ```
 
 ## 8. Funções
@@ -594,10 +595,10 @@ O operador pipe `(%>%)` é uma das ferramentas mais úteis e poderosas do Tidyve
 O operador pipe %\>% pega a saída de uma expressão e a passa como entrada para a próxima expressão. Isso permite encadear várias operações de maneira fluida.
 
 ```{r}
-dados %>% 
-  operacao1() %>%
-  operacao2() %>%
-  operacao3()
+# dados %>% 
+#   operacao1() %>%
+#   operacao2() %>%
+#   operacao3()
 
 ```
 
