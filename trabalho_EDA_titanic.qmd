@@ -1,5 +1,5 @@
 ---
-title: "trabalho_EDA"
+title: "trabalho_eda_titanic"
 format: html
 ---
 
@@ -14,17 +14,15 @@ O relatório também será inspecionado por um Cienstista de Dados contratado pe
 ## Pacotes
 
 ```{r}
-pacotes <- c("janitor", "tidyverse", "titanic", "e1071")
-
+pacotes <- c("janitor", "tidyverse", "titanic", "e1071")  
 install.packages(pacotes)
 ```
 
 ## Dados
 
 ```{r}
-# dados do titanic
-library(titanic)
+# dados do titanic 
+library(titanic)  
 
-titanic <- titanic_train
-
+titanic <- titanic_train 
 ```
