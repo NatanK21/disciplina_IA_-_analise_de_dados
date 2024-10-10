@@ -1,47 +1,505 @@
 ---
-title: "panorama_analise_dados"
+title: "EDA"
+author: "Natan Klein"
+format: html
 ---
 
-# Panorama da Análise de Dados
+# Análise Exploratória de Dados (EDA)
 
-## Contexto & História
+A EDA é o processo de explorar dados para resumir suas principais características e obter *insights* iniciais. Aqui estão alguns passos desse processo:
 
--   Panorama histórico da Ciência de Dados
+-   **Carregar os Dados:** importar os dados para o ambiente de análise;
 
--   Big Data
+-   **Entender a Estrutura dos Dados:** examinar variáveis, tipos de dados e valores ausentes;
 
--   Inteligência Artificial
+-   **Limpeza dos Dados:** tratar valores ausentes, duplicados e *outliers*;
 
--   Tomada de decisão
+-   **Análise Univariada:** explorar a distribuição de cada variável individualmente;
 
--   Áreas de estudo
+-   **Análise Bivariada:** explorar relações entre duas variáveis;
 
--   Exemplos: negócios, saúde, educação
+-   **Análise Multivariada:** investigar relações complexas envolvendo mais de duas variáveis;
 
-## Dados
+-   **Visualização dos Dados:** criar gráficos e visualizações para comunicar insights.
 
--   Definição
+Juntos, esses passos formam uma EDA. Em todo projeto de Ciência de Dados, uma EDA - muitas vezes informal -, é essencial.
 
--   Tipos de dados
+## 0 - Definições
 
--   Meios de coleta de dados
+Instale os pacotes utilizados neste documento e carregue os dados utilizados para os exemplos.
 
--   Sistemas de armazenamento de dados
+### 0.1 - Pacotes
 
-## Tipos de Análise de Dados
+Os pacotes utilizados neste documento são:
 
-Existem várias formas de categorizar a análise de dados. Dividir o assunto em quatro tipos é interessante:
+```{r}
+pacotes <- c("janitor", "tidyverse", "titanic", "e1071")
 
--   **Descritiva:**
+install.packages(pacotes)
+```
 
--   **Diagnóstica:**
+### 0.2 - Dados dos exemplos
 
--   **Preditiva:**
+Todos os exemplos apresentados serão baseados nos dados do Titanic. Esse é um famoso conjunto de dados que costuma ser usado para testar algoritmos para classificar os passageiros que morreram ou não no acidente. Os dados podem ser baixados e acessados como segue:
 
--   **Prescritiva:**
+```{r}
+# dados do titanic para os exemplos
+library(titanic)
 
-![](imagens/tipos_analise_dados.png)
+titanic <- titanic_train
 
-## Ciclo da Análise de Dados
+# use ?titanic no console para ver as variáveis
+# digite titanic para ver os dados
+```
 
--   CRISP-DM
+## 1 - Fluxo do processo de Ciência de Dados
+
+Existem diversas propostas de fluxos e processos para a Ciência de Dados, como CRISP-DM, KDD, entre outros. Este é particularmente interessante:
+
+![](images/clipboard-101308579.png)
+
+Ver explicação completa do processo em <https://cienciadedatos.github.io/pt-r4ds/intro.html#fig-ds-diagram>
+
+## 2 - Dados
+
+### 2.1 - Definição
+
+Temos um conjunto de dados **estruturados** - de preferência, em formato tabular. E agora?
+
+Dados são abstrações de aspectos do mundo real. Chegamos a eles e dois passos:
+
+1.  Simplificamos a realidade usando um conjunto de suposições/teorias;
+
+2.  Atribuímos números aos objetos para quantificar a versão simplificada da realidade.
+
+**Exemplo 1:** características sociodemográficas.
+
+Uma pessoa pode ser caracterizada em relação às outras de diversas maneiras. Para cada pessoa, há muita informação! Comumente, simplificamos essa complexidade ao enfocar certas características:
+
+-   Idade -\> em anos, anos e meses, faixas?
+
+-   Sexo -\> sexo ou gênero?
+
+-   Nível escolar -\> anos de estudo, níveis completos, níveis completos/incompletos?
+
+-   Renda -\> salário, faixas?
+
+-   Ocupação -\> autodeclarado, código CBO?
+
+**Exemplo 2:** inteligência.
+
+Muitas coisas caracterizam o comportamento humano 'inteligente', mas as teorias da inteligência humana (especialmente o modelo Cattell-Horn-Caroll) buscam descrever as habilidades mentais centrais (veja a simplificação). Para isso, diversas habildades mentais foram medidas (quantificação) e análises estatísticas foram realizadas para identificar quais habilidades gerais explicam a maior parte da variabilidade.
+
+Quando simplificamos um aspecto da realidade e atribuímos um número a ele que pode variar, temos uma **variável.**
+
+### 2.2 - Tipos de variáveis
+
+Existem dois tipos básicos de variáveis, que se subdividem em outros dois tipos cada. O tipo de variável determina:
+
+-   O tipo de gráfico adequado para representar a variável;
+
+-   A medida estatística adequada para descrever a variável;
+
+-   O modelo de Machine Learning adequado para relacionar as variáveis.
+
+![](images/clipboard-3033463280.png)
+
+Na análise de dados, as variáveis são classificadas de acordo com o tipo de informação que representam. Conhecer os tipos de variáveis é essencial para escolher as técnicas estatísticas adequadas e interpretar corretamente os resultados. Os principais tipos de variáveis são:
+
+**1. Variáveis Categóricas**
+
+Variáveis qualitativas, também conhecidas como variáveis categóricas, representam características ou atributos que não são mensuráveis numericamente. Elas podem ser divididas em dois subtipos:
+
+-   **Variáveis Nominais:** categorias que não têm uma ordem intrínseca. Exemplos incluem gênero, cor dos olhos, tipo de fruta.
+
+-   **Variáveis Ordinais:** categorias que têm uma ordem intrínseca. Exemplos incluem níveis de escolaridade (fundamental, médio, superior), classificação de satisfação (ruim, regular, bom, ótimo).
+
+**2. Variáveis Numéricas**
+
+Variáveis quantitativas, também chamadas de variáveis numéricas, representam quantidades mensuráveis e são expressas em números. Elas podem ser divididas em dois subtipos:
+
+-   **Variáveis Contínuas:** podem assumir qualquer valor dentro de um intervalo contínuo. Exemplos incluem altura, peso e temperatura.
+
+-   **Variáveis Discretas:** podem assumir apenas valores inteiros específicos. Exemplos incluem número de filhos, número de carros em uma garagem.
+
+Além dos tipos de dados, existem alguns problemas comuns com os dados:
+
+-   ***Missings*****, ou dados faltantes, são valores ausentes em um conjunto de dados.** Esses valores podem estar ausentes por diversos motivos, como erros de digitação, falhas no equipamento de coleta de dados, recusa do participante em responder a determinada pergunta, entre outros. A presença de missings pode comprometer a análise dos dados, pois reduz o tamanho da amostra e pode introduzir vieses nos resultados. É fundamental identificar e tratar adequadamente os dados faltantes para garantir a confiabilidade das conclusões de uma pesquisa.
+
+-   ***Outliers*** **são dados que se desviam significativamente da maioria dos outros pontos de dados em um conjunto de informações.** Em outras palavras, são valores atípicos que se encontram muito distantes do centro da distribuição dos dados. Esses valores podem ser tanto muito maiores quanto muito menores que a média dos demais. A presença de outliers pode distorcer os resultados de análises estatísticas, como a média e o desvio padrão, e comprometer a interpretação dos dados. É importante identificar e tratar os outliers de forma adequada para garantir a precisão das análises. As causas dos outliers podem ser diversas, como erros de medida, eventos excepcionais ou características intrínsecas dos dados.
+
+## 3 - Análise de variáveis categóricas
+
+A coisa mais básica que podemos fazer com variáveis categóricas é contar quantas vezes cada categoria ocorre e comparar essas ocorrências. A contagem simples é chamada de frequência e a contagem relativa é chamada de frequência relativa (expressa em porcentagem %). Veja a equação da frequência relativa:
+
+$$ f_i = \frac{n_i}{N} $$
+
+**Decomposição da equação:**
+
+-   $fᵢ$ Representa a **frequência relativa** da i-ésima categoria ou valor. É a proporção que essa categoria representa em relação ao total de dados;
+
+-   $nᵢ$ Indica a **frequência absoluta** da i-ésima categoria ou valor. Ou seja, quantas vezes esse valor aparece no conjunto de dados;
+
+-   $N$ Corresponde ao **número total de observações** no conjunto de dados.
+
+**Em resumo, a equação calcula a frequência relativa dividindo o número de vezes que um determinado valor aparece (frequência absoluta) pelo número total de dados.**
+
+**Exemplo:**
+
+```{r}
+# analisar frequências no R-base
+table(titanic$Sex)
+
+# analisar frequências relativas no R-base
+table(titanic$Sex)/sum(table(titanic$Sex))
+
+# frequências no tidyverse
+library(tidyverse)
+
+titanic %>% 
+  group_by(Sex) %>% 
+  summarise(
+    freq = n(), 
+    porc = (freq/length(titanic$Sex)) * 100
+    )
+
+# frequências no janitor
+library(janitor)
+
+tabyl(titanic$Sex)
+
+# gráfico de barras
+ggplot(titanic, aes(x = Sex)) +
+  geom_bar()
+```
+
+## 4 - Análise de variáveis numéricas
+
+As variáveis numéricas podem ser analisadas de várias formas:
+
+-   Podem ser **categorizadas** e **contadas** (histogramas ou tabelas);
+
+-   **Medidas de tendência central** podem ser usadas, como média, mediana e moda;
+
+-   **Medidas de dispersão** podem ser utilizadas para quantificar a variabilidade (min-max, variância, desvio-padrão);
+
+-   **Medidas de partição** podem separar a distribuição ordenada dos dados em proporções iguais (quantis);
+
+-   **Métricas de distribuição** podem fornecer informações sobre a forma da distribuição dos dados (assimetria e curtose).
+
+### 4.1 - Histogramas
+
+Categorizar (binning) e contar os dados numéricos são os procedimentos que formam um histograma de frequências, um gráfico útil para vizualizar a distribuição dos dados:
+
+```{r}
+# idades dos passageiros do titanic
+ggplot(titanic, aes(x = Age)) +
+  geom_histogram() # histograma
+  
+ggplot(titanic, aes(x = Age)) +
+  geom_density() # gráfico de densidade
+```
+
+**Um histograma é um tipo de gráfico que representa a distribuição de frequências de um conjunto de dados numéricos.** Ele é composto por barras retangulares adjacentes, onde a largura de cada barra representa um intervalo de valores e a altura indica a quantidade de dados que se encaixam nesse intervalo. Histogramas são ferramentas visuais poderosas, pois permitem identificar rapidamente a forma da distribuição dos dados, como por exemplo, se ela é simétrica, assimétrica ou multimodal. Além disso, ajudam a visualizar a concentração dos dados em determinadas faixas de valores, facilitando a análise estatística e a tomada de decisões.
+
+### 4.2 - Medidas de tendência central
+
+A **média** é a medida mais utilizada para resumir os dados. Ela também é chamada de valor esperado e consiste em um modelo estatístico simples para variáveis numéricas. Nesse sentido, a média da amostra $\bar{x}$ é uma estimativa da média da população $\mu$ .
+
+$$ \bar{x} = \frac{1}{n} \sum_{i=1}^{n} x_i $$
+
+**Decomposição da equação:**
+
+-   $x̄$ **(x barra)** Representa a **média aritmética** do conjunto de dados. É o valor central que resume a tendência central desses dados.
+-   $n$ Indica o **número total de elementos** no conjunto de dados. É o tamanho da amostra ou população que estamos analisando.
+-   $∑$ É o símbolo da **soma (sigma)**. Indica que devemos somar todos os valores que se seguem.
+-   $i = 1$ Indica que a soma começa com o primeiro elemento do conjunto de dados.
+-   $n$ Indica que a soma vai até o último elemento do conjunto de dados.
+-   $xᵢ$ Representa o **i-ésimo elemento** do conjunto de dados. Ou seja, cada um dos valores individuais que compõem o conjunto.
+
+**Exemplo:**
+
+```{r}
+# idades dos passageiros do titanic
+ggplot(titanic, aes(x = Age)) +
+  geom_histogram() + # histograma
+  geom_vline(
+    xintercept = mean(titanic$Age, na.rm = TRUE),
+    color = "red",
+    linewidth = 2
+    )
+
+# calcular a média
+mean(titanic$Age, na.rm = TRUE)
+```
+
+A **mediana** é outra medida de tendência central. Ela é o valor que separa o conjunto de dados ordenado em duas partes, i.e., é o valor que está na posição do meio.
+
+$$ \tilde{x} = \begin{cases}     x_{(n+1)/2} & \text{se } n \text{ é ímpar} \\     \frac{x_{n/2} + x_{(n/2)+1}}{2} & \text{se } n \text{ é par}\end{cases} $$
+
+**Decomposição da equação:**
+
+-   $x̃$ **(x til)** Representa a **mediana** do conjunto de dados. É o valor que divide o conjunto de dados ordenados em duas partes iguais;
+
+-   $n$ Indica o **número total de elementos** no conjunto de dados;
+
+-   $x₍ᵢ₎$ Representa o **i-ésimo valor ordenado** do conjunto de dados. Ou seja, os dados estão ordenados em ordem crescente (ou decrescente) e x₍ᵢ₎ indica o valor que ocupa a i-ésima posição nessa ordem.
+
+**A equação está dividida em dois casos:**
+
+1.  **Se** $n$ **é ímpar:**
+
+    -   A mediana é simplesmente o valor que ocupa a posição central do conjunto de dados quando eles estão ordenados. Essa posição central é dada por (n+1)/2.
+
+    -   Por exemplo, se tivermos 5 números ordenados, a mediana será o terceiro número (posição (5+1)/2 = 3).
+
+2.  **Se** $n$ **é par:**
+
+    -   Quando o número de elementos é par, não há um valor central único. Nesse caso, a mediana é calculada como a média dos dois valores centrais. Esses valores centrais ocupam as posições n/2 e (n/2)+1.
+
+    -   Por exemplo, se tivermos 6 números ordenados, a mediana será a média entre o terceiro e o quarto número (posições 6/2 = 3 e (6/2)+1 = 4).
+
+```{r}
+# idades dos passageiros do titanic
+ggplot(titanic, aes(x = Age)) +
+  geom_histogram() + # histograma
+  geom_vline(
+    xintercept = median(titanic$Age, na.rm = TRUE),
+    color = "blue",
+    linewidth = 2
+    )
+
+# calcular a mediana
+median(titanic$Age, na.rm = TRUE)
+```
+
+A média é sensível a *outliers,* enquanto a mediana não é - por isso, a mediana é chamada de uma métrica robusta. Contudo, a mediana não é tão informativa quanto a média - por isso, a média é muito mais utilizada em estatística.
+
+```{r}
+# idades dos passageiros do titanic
+ggplot(titanic, aes(x = Age)) +
+  geom_histogram() + # histograma
+  geom_vline(
+    xintercept = median(titanic$Age, na.rm = TRUE),
+    color = "blue",
+    linewidth = 2
+    ) +
+  geom_vline(
+    xintercept = mean(titanic$Age, na.rm = TRUE),
+    color = "red",
+    linewidth = 2
+  )
+
+# diferença entre a média e a mediana
+mean(titanic$Age, na.rm = TRUE) - median(titanic$Age, na.rm = TRUE)
+```
+
+A **moda** é simplesmente o valor mais frequente. Quase nunca é utilizada na prática. Um pico na distribuição represental um valor modal, e pode haver mais de um em uma distribuição (multimodal).
+
+Alternativas à **média aritmética**:
+
+-   **Média Ponderada:** atribui pesos diferentes a cada valor em um conjunto de dados, refletindo a importância relativa de cada um. É útil quando alguns valores têm mais influência do que outros.
+
+-   **Média Geométrica:** é calculada multiplicando todos os valores e, em seguida, calculando a raiz enésima do resultado. É ideal para dados que envolvem taxas de crescimento ou quando os valores são multiplicados entre si.
+
+-   **Média Harmônica:** é o inverso da média aritmética dos inversos dos valores. É útil para calcular taxas médias, como velocidade média quando se considera distâncias e tempos.
+
+-   **Médias Aparadas:** eliminam um certo percentual de valores extremos (maiores e menores) antes de calcular a média. Isso torna a média menos sensível a outliers e fornece uma medida de tendência central mais robusta.
+
+### 4.3 - Medidas de dispersão
+
+As medidas de dispersão pretendem resumir a variabilidade dos dados, i.e., estimar a variabilidade "média" na distribuição. A medida mais comum é verficar os pontos mínimos e máximos de uma variável.
+
+```{r}
+# mínimo 
+min(titanic$Age, na.rm = TRUE)  
+# máximo
+max(titanic$Age, na.rm = TRUE)
+```
+
+A forma de avaliar a dispersão mais utilizada em modelos estatísticos é a variância, $\sigma^2$. A variância na amostra é representada por $s^2$.
+
+$$ \sigma^2 = \frac{1}{N} \sum_{i=1}^{N} (x_i - \mu)^2 $$
+
+**Decomposição da equação:**
+
+-   $σ²$ **(sigma ao quadrado)** Representa a **variância** da população. É uma medida da dispersão dos dados em torno da média.
+-   $N$ Indica o **número total de elementos** na população.
+-   $∑$ **(sigma)** É o símbolo da **soma**. Indica que devemos somar todos os valores que se seguem.
+-   $i = 1$ Indica que a soma começa com o primeiro elemento da população.
+-   $N$ Indica que a soma vai até o último elemento da população.
+-   $xᵢ$ Representa o **i-ésimo elemento** da população. Ou seja, cada um dos valores individuais que compõem a população.
+-   $μ$ **(mi)** Representa a **média** da população, cujo valor é o mesmo da média da amostra $x̄$
+
+Em alguns casos, ${N} - 1$ é utilizado no denominador, representando os graus de liberdade. Isso faz com que a variância da amostra seja uma melhor estimativa da variância da população - mas isso faz pouca diferença em grandes conjuntos de dados.
+
+```{r}
+# variância das idades
+var(titanic$Age, na.rm = TRUE)
+```
+
+Para tornar a métrica da variância mais "interpretável", utiliza-se a raiz quadrada da variância, que é o desvio-padrão:
+
+$$ \sigma = \sqrt{\frac{1}{N} \sum_{i=1}^{N} (x_i - \mu)^2} $$
+
+Na amostra o desvio-padrão é representado por $s$.
+
+```{r}
+# desvio padrão das idades
+sd(titanic$Age, na.rm = TRUE)
+```
+
+Outra métrica interessante é o desvio mediano absoluto da mediana (MAD):
+
+$$ MAD = \text{mediana}(|x_i - \text{mediana}(x)|) $$
+
+```{r}
+# MAD
+mad(titanic$Age, na.rm = TRUE)
+```
+
+Variância e desvio-padrão são sensíveis a *outliers*, enquanto a MAD é uma métrica robusta. Versões aparadas da variância e desvio-padrão também são robustas e podem ser utilizadas.
+
+### 4.4 - Medidas de partição
+
+As métricas de partição consistem em medidas que encontram pontos no conjunto de dados ordenado que separam esse conjunto em proporções iguais. A mediana, por exemplo, separa o conjunto de dados em duas partes (50/50%). Os quartis separam os dados em 4 partes e os percentis em 100 partes:
+
+![](images/clipboard-1185679180.png)
+
+```{r}
+# quartis 
+quantile(titanic$Age, c(0, 0.25, 0.50, 0.75, 1), na.rm = TRUE) 
+# percentis 
+
+data.frame(percentis = quantile(titanic$Age,
+                                seq(0.01, 1.00, 0.01),
+                                na.rm = TRUE)
+           )
+```
+
+### 4.5 - Métricas de distribuição
+
+A assimetria avalia o grau de desvio da curva em relação a uma distribuição normal-padrão, simétrica:
+
+![](images/clipboard-769126535.png)
+
+A curtose avalia o grau de desvio da curva em termos de achatamento em relação a uma distribuição normal-padrão:
+
+![](images/clipboard-2629942186.png)
+
+```{r}
+# calcular assimetria e curtose 
+library(e1071)  
+
+# assimetria 
+skewness(titanic$Age, na.rm = TRUE)  
+
+# curtose 
+kurtosis(titanic$Age, na.rm = TRUE)
+```
+
+### 4.6 - Box-Plots
+
+O **gráfico box-plot**, também conhecido como **diagrama de caixa**, é uma ferramenta visual poderosa utilizada na estatística para representar a distribuição de um conjunto de dados. Ele oferece uma forma concisa e informativa de visualizar a dispersão dos dados, a presença de valores discrepantes (outliers) e comparar diferentes conjuntos de dados.
+
+**Como funciona o box-plot?**
+
+Um box-plot é construído com base em cinco estatísticas chave:
+
+-   **Mínimo:** O menor valor do conjunto de dados.
+
+-   **Primeiro quartil (Q1):** 25% dos dados são menores que esse valor.
+
+-   **Mediana (Q2):** 50% dos dados são menores que esse valor.
+
+-   **Terceiro quartil (Q3):** 75% dos dados são menores que esse valor.
+
+-   **Máximo:** O maior valor do conjunto de dados.
+
+**O que cada parte do box-plot representa?**
+
+-   **Caixa:** Representa a região entre o primeiro e o terceiro quartil, contendo 50% dos dados. A altura da caixa indica a dispersão dos dados centrais.
+
+-   **Linha dentro da caixa:** Representa a mediana, ou seja, o valor que divide os dados em duas partes iguais.
+
+-   **"Bigodes":** As linhas que se estendem da caixa até o valor mínimo e máximo, respectivamente. Eles indicam o intervalo dos dados, excluindo os outliers.
+
+-   **Outliers:** Os pontos individuais que se encontram além dos "bigodes", representando valores que podem ser considerados atípicos em relação ao restante dos dados.
+
+**Para que serve o box-plot?**
+
+-   **Visualizar a distribuição dos dados:** Permite identificar rapidamente se a distribuição é simétrica, assimétrica ou se há a presença de outliers.
+
+-   **Comparar diferentes grupos:** Ao construir box-plots lado a lado, é possível comparar a distribuição de uma variável em diferentes grupos.
+
+-   **Identificar outliers:** Valores discrepantes podem ser facilmente identificados, permitindo uma análise mais aprofundada.
+
+-   **Avaliar a variabilidade dos dados:** A altura da caixa e o comprimento dos "bigodes" indicam a variabilidade dos dados.
+
+```{r}
+# idade ~box-plot simples 
+ggplot(titanic, aes(y = Age)) +   
+  geom_boxplot()  
+
+# idade X sobrevive ~box-plot com duas variáveis
+titanic %>% 
+  mutate(
+    Survived = factor(
+      Survived, 
+      levels = c(0, 1),
+      labels = c("Não", "Sim")
+                      )
+         ) %>% 
+  ggplot(aes(x = Age, y = Survived)) +
+  geom_boxplot()
+```
+
+## 5 - Distribuição Normal
+
+A **distribuição normal**, também conhecida como **distribuição gaussiana** ou **curva em forma de sino**, é uma das distribuições de probabilidade mais importantes e comuns em estatística. Ela descreve uma curva simétrica em torno de um ponto central, com a maioria dos dados concentrados nesse ponto e diminuindo gradualmente à medida que se afastam dele.
+
+**Características da Distribuição Normal:**
+
+-   **Simetria:** A curva é perfeitamente simétrica em torno da média.
+
+-   **Unimodal:** Possui apenas um pico, representando o valor mais frequente (moda).
+
+-   **Média, Mediana e Moda:** Na distribuição normal, a média, a mediana e a moda coincidem.
+
+-   **Assimetria:** É igual a zero, indicando que a distribuição não está inclinada para nenhum dos lados.
+
+-   **Curtose:** Mede o achatamento da curva. Na distribuição normal padrão, a curtose é igual a 3.
+
+![](images/clipboard-2271052898.png)
+
+**Por que a Distribuição Normal é Importante?**
+
+-   **Ocorrência na natureza:** Muitas variáveis naturais seguem aproximadamente uma distribuição normal, como altura, peso, pontuações de testes e erros de medição.
+
+-   **Teorema do Limite Central:** Mesmo que a distribuição original de uma variável não seja normal, a distribuição da média de amostras grandes tenderá a ser normal.
+
+-   **Base para muitos testes estatísticos:** Muitos testes estatísticos assumem que os dados seguem uma distribuição normal.
+
+**Parâmetros da Distribuição Normal:**
+
+-   **Média (μ):** Indica o centro da distribuição, ou seja, o valor esperado.
+
+-   **Desvio padrão (σ):** Mede a dispersão dos dados em torno da média. Um desvio padrão maior indica uma distribuição mais espalhada.
+
+**Aplicações da Distribuição Normal:**
+
+-   **Controle de qualidade:** Para monitorar processos e identificar desvios da qualidade.
+
+-   **Finanças:** Na modelagem de retornos de investimentos e preços de ativos.
+
+-   **Ciências sociais:** Para analisar dados de pesquisas e experimentos.
+
+-   **Ciências naturais:** Em diversas áreas, como física, química e biologia.
+
+**Quando usar a Distribuição Normal:**
+
+-   **Dados contínuos:** A distribuição normal é mais adequada para dados contínuos, como altura, peso, tempo, etc.
+
+-   **Simetria:** Os dados devem apresentar uma distribuição aproximadamente simétrica.
+
+-   **Ausência de outliers:** Outliers podem distorcer a forma da distribuição.
